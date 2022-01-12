@@ -106,6 +106,18 @@ class Init():
     def do_setting_activemq_web_access(self, role, user, password):
         global ACTIVEMQ_HOME
 
+        context_path = os.getenv('ACTIVEMQ_WEB_APP_CONTEXT_PATH')
+        if context_path is not None and context_path != "":
+            self.replace_all(
+                ACTIVEMQ_CONF + "/jetty.xml",
+                "<property name=\"contextPath\" value=\"/admin\" />",
+                "<property name=\"contextPath\" value=\"/{0}/admin\" />".format(context_path))
+
+            self.replace_all(
+                ACTIVEMQ_CONF + "/jetty.xml",
+                "<property name=\"contextPath\" value=\"/api\" />",
+                "<property name=\"contextPath\" value=\"/{0}/api\" />".format(context_path))
+
         if role is None or role == "":
             raise KeyError("You must set the role")
 
